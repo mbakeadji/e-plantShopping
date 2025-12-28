@@ -6,59 +6,48 @@ import './CartItem.css';
 const CartItem = ({ onContinueShopping }) => {
   const cart = useSelector(state => state.cart.items);
   const dispatch = useDispatch();
-  const handleCheckoutShopping = (e) => {
-  alert('Functionality to be added for future reference');
-};
-  // Calculate total amount for all products in the cart
+
+  // Calcule le montant total de tout le panier
   const calculateTotalAmount = () => {
-
-     // Initialiser une variable total pour contenir la somme cumulative
-     let total = 0;
-
-     // Itérer sur le tableau cart en utilisant cart.forEach()
-     cart.forEach(item => {
-             // Extraire la quantity et le cost de chaque article
-             const quantity = item.quantity;
-             const cost = item.cost;
-
-             // Convertir la chaîne cost en nombre
-             const numericCost = parseFloat(cost.substring(1)); // Enlève le symbole '$' et convertit en nombre
-
-             // Multiplier la cost par la quantity
-             total += numericCost * quantity; // Ajouter la valeur résultante à total
-     });
-
-     // Retourner la somme finale total
-     return total;
- 
+    return cart.reduce((total, item) => {
+      const costValue = parseFloat(item.cost.substring(1));
+      return total + (costValue * item.quantity);
+    }, 0).toFixed(2);
   };
 
   const handleContinueShopping = (e) => {
-   onContinueShopping(e)
+    onContinueShopping(e);
   };
 
-
-
   const handleIncrement = (item) => {
+    // IMPORTANT: On envoie un objet avec name et la NOUVELLE quantité
+    dispatch(updateQuantity({ name: item.name, quantity: item.quantity + 1 }));
   };
 
   const handleDecrement = (item) => {
-   
+    if (item.quantity > 1) {
+      dispatch(updateQuantity({ name: item.name, quantity: item.quantity - 1 }));
+    } else {
+      // Si la quantité tombe à 0, on supprime l'article
+      dispatch(removeItem(item.name));
+    }
   };
 
   const handleRemove = (item) => {
     dispatch(removeItem(item.name));
   };
 
-  // Calculate total cost based on quantity for an item
+  // Calcule le sous-total pour une ligne (Prix x Quantité)
   const calculateTotalCost = (item) => {
+    const costValue = parseFloat(item.cost.substring(1));
+    return (costValue * item.quantity).toFixed(2);
   };
 
   return (
     <div className="cart-container">
       <h2 style={{ color: 'black' }}>Total Cart Amount: ${calculateTotalAmount()}</h2>
       <div>
-        {cart.map(item => (
+        {cart.map((item) => (
           <div className="cart-item" key={item.name}>
             <img className="cart-item-image" src={item.image} alt={item.name} />
             <div className="cart-item-details">
@@ -69,7 +58,7 @@ const CartItem = ({ onContinueShopping }) => {
                 <span className="cart-item-quantity-value">{item.quantity}</span>
                 <button className="cart-item-button cart-item-button-inc" onClick={() => handleIncrement(item)}>+</button>
               </div>
-              <div className="cart-item-total">Total: ${calculateTotalCost(item)}</div>
+              <div className="cart-item-total">Unit Total: ${calculateTotalCost(item)}</div>
               <button className="cart-item-delete" onClick={() => handleRemove(item)}>Delete</button>
             </div>
           </div>
@@ -79,12 +68,10 @@ const CartItem = ({ onContinueShopping }) => {
       <div className="continue_shopping_btn">
         <button className="get-started-button" onClick={(e) => handleContinueShopping(e)}>Continue Shopping</button>
         <br />
-        <button className="get-started-button1">Checkout</button>
+        <button className="get-started-button1" onClick={() => alert('Functionality coming soon')}>Checkout</button>
       </div>
     </div>
   );
 };
 
 export default CartItem;
-
-

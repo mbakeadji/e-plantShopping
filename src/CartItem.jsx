@@ -11,7 +11,7 @@ const CartItem = ({ onContinueShopping }) => {
 };
   // Calculate total amount for all products in the cart
   const calculateTotalAmount = () => {
-function calculateTotalAmount(cart) {
+
      // Initialiser une variable total pour contenir la somme cumulative
      let total = 0;
 
@@ -30,11 +30,11 @@ function calculateTotalAmount(cart) {
 
      // Retourner la somme finale total
      return total;
-} 
+ 
   };
 
   const handleContinueShopping = (e) => {
-   
+   onContinueShopping(e)
   };
 
 
